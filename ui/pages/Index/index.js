@@ -1,32 +1,74 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import Styles from './styles';
+import { Link, useHistory } from 'react-router-dom';
+import { useMutation, useQuery } from '@apollo/client';
+import { documents as documentsQuery } from '../../queries/Documents.gql';
+import { addDocument } from '../../mutations/Documents.gql';
+import { timeago } from '../../../modules/dates';
+import BlankState from '../../components/BlankState';
+import Loading from '../../components/Loading';
+import { Document, DocumentsList, StyledDocuments } from '../DocumentsUseQueryUseMutation/styles';
 
-const Index = () => (
-  <Styles.Index>
-    <img
-      src="https://s3-us-west-2.amazonaws.com/cleverbeagle-assets/graphics/email-icon.png"
-      alt="Clever Beagle"
-    />
-    <h1>Pup</h1>
-    <p>The Ultimate Boilerplate for Products.</p>
-    <div>
-      <Button href="http://cleverbeagle.com/pup">Read the Docs</Button>
-      <Button href="https://github.com/cleverbeagle/pup">
-        <i className="fa fa-star" />
-        {' Star on GitHub'}
-      </Button>
-    </div>
-    <footer>
-      <p>
-        {'Want to learn how to build a really solid MVP with Pup? '}
-        <a href="https://cleverbeagle.com/together?utm_source=pup&utm_medium=app&utm_campaign=oss">
-          Check out Together by Clever Beagle
-        </a>
-        .
-      </p>
-    </footer>
-  </Styles.Index>
-);
+const DocumentsUseQueryUseMutation = () => {
+  const history = useHistory();
+  const { loading, data, error } = useQuery(documentsQuery);
+  const [addDocumentMutation] = useMutation(addDocument, {
+    refetchQueries: [{ query: documentsQuery }],
+    onCompleted: (mutation) => {
+      history.push(`/documents/${mutation.addDocument._id}/edit`);
+    },
+  });
 
-export default Index;
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <pre>{error}</pre>;
+  }
+
+  const { documents } = data;
+
+  return (
+    <StyledDocuments>
+      <header className="clearfix">
+        <Button bsStyle="success" onClick={addDocumentMutation}>
+          New Document
+        </Button>
+      </header>
+      {documents?.length ? (
+        <DocumentsList>
+          {documents.map(({ _id, isPublic, title, updatedAt }) => (
+            <Document key={_id}>
+              <Link to={`/documents/${_id}/edit`} />
+              <header>
+                {isPublic ? (
+                  <span className="label label-success">Public</span>
+                ) : (
+                  <span className="label label-default">Private</span>
+                )}
+                <h2>{title}</h2>
+                <p>{timeago(updatedAt)}</p>
+              </header>
+            </Document>
+          ))}
+        </DocumentsList>
+      ) : (
+        <BlankState
+          icon={{ style: 'solid', symbol: 'file-alt' }}
+          title="You're plum out of documents, friend!"
+          subtitle="Add your first document by clicking the button below."
+          action={{
+            style: 'success',
+            onClick: addDocumentMutation,
+            label: 'Create Your First Document',
+          }}
+        />
+      )}
+    </StyledDocuments>
+  );
+};
+
+DocumentsUseQueryUseMutation.propTypes = {};
+
+export default DocumentsUseQueryUseMutation;

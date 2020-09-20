@@ -16,7 +16,8 @@
     }
   },
   "scripts": {
-    "dev": "meteor --settings settings-development.json --port 3210",
+    "express": "meteor npm run server --prefix Express",
+    "dev": "concurrently \"meteor --settings settings-development.json --port 3210\" \"meteor npm run express\"",
     "staging": "DEPLOY_HOSTNAME=us-east-1.galaxy-deploy.meteor.com meteor deploy pup-staging.cleverbeagle.com --settings settings-staging.json",
     "production": "DEPLOY_HOSTNAME=us-east-1.galaxy-deploy.meteor.com meteor deploy pup.cleverbeagle.com --settings settings-production.json",
     "lint": "eslint .",
@@ -41,8 +42,10 @@
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "commonmark": "^0.29.0",
+    "concurrently": "^5.3.0",
     "core-js": "^3.1.4",
     "file-saver": "^2.0.2",
+    "fs": "0.0.1-security",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.5",
@@ -56,6 +59,7 @@
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
+    "path": "^0.12.7",
     "polished": "^3.4.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",

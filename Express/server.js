@@ -31,8 +31,7 @@ function fromDir(startPath) {
     // checks if the current file has the extension type of an image
     if (filter.some((extension) => (path.extname(filename.toLowerCase()) === extension))) {
       image = base64Encode(files[i]);
-      images64.push({ id: countId, content: image });
-      countId += 1;
+      images64.push(image);
     }
   }
 }
@@ -48,12 +47,8 @@ app.get('/resize', cors(corsOptions), (req, res) => {
 });
 
 /*
-app.get('/resize', cors(corsOptions), (req, res) => {
-  const exampleJson = [
-    { id: 1, desc: 'background' },
-    { id: 2, desc: 'witch' },
-    { id: 3, desc: 'vampire' },
-  ];
+app.get('/resizeTest', cors(corsOptions), (req, res) => {
+  const exampleJson = ['background', 'witch', 'vampire'];
 
   res.json(exampleJson);
 });

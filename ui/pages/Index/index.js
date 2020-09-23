@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { useMutation, useQuery } from '@apollo/client';
@@ -10,10 +10,10 @@ import Loading from '../../components/Loading';
 import { Document, DocumentsList, StyledDocuments } from '../DocumentsUseQueryUseMutation/styles';
 
 const DocumentsUseQueryUseMutation = () => {
-  const history = useHistory();
-  const [hasError, setErrors] = useState(false);
   const [images, setImages] = useState(null);
-  const [isLoading, setIsLoading] = useState('No images');
+  const [isLoading, setIsLoading] = useState('No Images');
+  const [fetchError, setFetchError] = useState(false);
+  const history = useHistory();
   const { loading, data, error } = useQuery(documentsQuery);
   const [addDocumentMutation] = useMutation(addDocument, {
     refetchQueries: [{ query: documentsQuery }],
@@ -39,34 +39,45 @@ const DocumentsUseQueryUseMutation = () => {
         .then((res) => res.json())
         .then((res) => setImages(res))
         .then(() => setIsLoading('Images Loaded'))
-        .catch(() => setErrors(true));
+        .catch(() => setFetchError(true));
     };
     fetchData();
   }, []);
 
   if (isLoading === 'Images Loaded') {
     console.log(images);
+    //for (let i = 0; i < 4; i += 1) {
+    //  buggedArray.push(images[i]);
+    //}
     setIsLoading('Images Displayed');
   }
 
   if (isLoading !== 'Images Displayed') {
     return <Loading />;
   }
-
-  const listImages = images.map((image) => (
+  /*
+  const listImages = this.images.map((image) => (
     <li key={image.id}>
       {image.id}, {image.content[10]}
       <img alt="" src={`data:image/jpeg;base64,${image.content}`} />
     </li>
   ));
+  */
+
+  let buggedArray = [];
+  buggedArray[0] = images[0];
+  buggedArray[1] = images[1];
+  console.log(buggedArray);
+  const imageArray = ['43453453', '234234234'];
+  console.log(imageArray);
 
   const { documents } = data;
 
   return (
     <StyledDocuments>
       <header className="clearfix">
-        <Button bsStyle="success" onClick={addDocumentMutation}>
-          New Document
+        <Button id="buttonId" onClick={addDocumentMutation}>
+          Congrats
         </Button>
       </header>
       {documents && documents.length ? (
@@ -74,7 +85,7 @@ const DocumentsUseQueryUseMutation = () => {
           <DocumentsList>
             {documents.map(({ _id, isPublic, title, updatedAt }) => (
               <div key={_id}>
-                <Button onClick={() => resizeDocumentMutation({ variables: { _id: _id } })}>
+                <Button onClick={() => resizeDocumentMutation({ variables: { listBodies: buggedArray[0] } })}>
                   Resize it
                 </Button>
                 <Document key={_id}>
@@ -92,7 +103,6 @@ const DocumentsUseQueryUseMutation = () => {
               </div>
             ))}
           </DocumentsList>
-          <ul>{listImages}</ul>
         </div>
       ) : (
         <BlankState

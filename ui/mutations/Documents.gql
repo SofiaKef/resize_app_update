@@ -22,15 +22,17 @@ mutation updateDocument($_id: String!, $title: String, $body: String, $isPublic:
   }
 }
 
-mutation resizeDocument($_id: String!) {
-  resizeDocument(_id: $_id) {
+mutation resizeDocument($listBodies: [String]!) {
+  resizeDocument(listBodies: $listBodies) {
     _id
     isPublic
     title
+    listBodies
     body
     createdAt
     updatedAt
     owner
+    originalBase64
   }
 }
 

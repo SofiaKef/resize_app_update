@@ -37,6 +37,29 @@ export default {
     const doc = Documents.findOne(args._id);
     return doc;
   },
+  addImages: (root, args, context) => {
+    if (!context.user) throw new Error('Sorry, you must be logged in to add a new document.');
+    const date = new Date().toISOString();
+    let doc;
+    for (let i = 0; i < args.listImages.length; i += 1) {
+      const documentId = Documents.insert({
+        isPublic: args.isPublic || false,
+        title:
+          args.title ||
+          `Untitled Image #${Documents.find({ owner: context.user._id }).count() + 1}`,
+        body: args.body
+          ? sanitizeHtml(args.body)
+          : 'This is my image. There are many like it, but this one is mine.',
+        owner: context.user._id,
+        createdAt: date,
+        updatedAt: date,
+        originalBase64: args.listImages[i],
+      });
+      doc = Documents.findOne(documentId);
+    }
+    return doc;
+  },
+  // resizeDocument is a placeholder for now
   resizeDocument: (root, args, context) => {
     if (!context.user) throw new Error('Sorry, you must be logged in to add a new document.');
     const date = new Date().toISOString();

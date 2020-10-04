@@ -1,9 +1,9 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { useMutation, useQuery } from '@apollo/client';
 import { documents as documentsQuery } from '../../queries/Documents.gql';
-import { addDocument, resizeDocument } from '../../mutations/Documents.gql';
+import { addDocument, addImages } from '../../mutations/Documents.gql';
 import { timeago } from '../../../modules/dates';
 import BlankState from '../../components/BlankState';
 import Loading from '../../components/Loading';
@@ -11,9 +11,11 @@ import { Document, DocumentsList, StyledDocuments } from '../DocumentsUseQueryUs
 
 const DocumentsUseQueryUseMutation = () => {
   const history = useHistory();
-  const [hasError, setErrors] = useState(false);
-  const [images, setImages] = useState(null);
-  const [isLoading, setIsLoading] = useState('No images');
+  const inputRef = useRef();
+  /* used state to store images because pushing then from inside function into
+  an array that was defined outside, didn't make any changes */ 
+  const [images, setImages] = useState([]);
+  const [imageState, setImageState] = useState('No images');
   const { loading, data, error } = useQuery(documentsQuery);
   const [addDocumentMutation] = useMutation(addDocument, {
     refetchQueries: [{ query: documentsQuery }],
@@ -21,7 +23,7 @@ const DocumentsUseQueryUseMutation = () => {
       history.push(`/documents/${mutation.addDocument._id}/edit`);
     },
   });
-  const [resizeDocumentMutation] = useMutation(resizeDocument, {
+  const [addImagesMutation] = useMutation(addImages, {
     refetchQueries: [{ query: documentsQuery }],
   });
 
@@ -33,50 +35,36 @@ const DocumentsUseQueryUseMutation = () => {
     return <pre>{error}</pre>;
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      fetch('http://localhost:5010/resize')
-        .then((res) => res.json())
-        .then((res) => setImages(res))
-        .then(() => setIsLoading('Images Loaded'))
-        .catch(() => setErrors(true));
-    };
-    fetchData();
-  }, []);
-
-  if (isLoading === 'Images Loaded') {
-    console.log(images);
-    setIsLoading('Images Displayed');
-  }
-
-  if (isLoading !== 'Images Displayed') {
-    return <Loading />;
-  }
-
-  const listImages = images.map((image) => (
-    <li key={image.id}>
-      {image.id}, {image.content[10]}
-      <img alt="" src={`data:image/jpeg;base64,${image.content}`} />
-    </li>
-  ));
-
   const { documents } = data;
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    for (let i = 0; i < inputRef.current.files.length; i += 1) {
+      const reader = new FileReader();
+      reader.onloadend = (readerEvent) => {
+        setImages((imagesLocal) => {
+          // if all images are done loading
+          if (imagesLocal.length + 1 === inputRef.current.files.length) {
+            setImageState('Images Uploaded');
+            // showcase that images is an array of strings ([String])
+            console.log(`isArray images: ${Array.isArray(imagesLocal)}`);
+            console.log(`typeof image[0]: ${typeof imagesLocal[0]}`);
+            console.log(`images: ${imagesLocal}`);
+          }
+          return [...imagesLocal, readerEvent.target.result];
+        });
+      };
+      reader.readAsDataURL(inputRef.current.files[i]);
+    }
+  };
 
   return (
     <StyledDocuments>
-      <header className="clearfix">
-        <Button bsStyle="success" onClick={addDocumentMutation}>
-          New Document
-        </Button>
-      </header>
       {documents && documents.length ? (
         <div>
           <DocumentsList>
             {documents.map(({ _id, isPublic, title, updatedAt }) => (
               <div key={_id}>
-                <Button onClick={() => resizeDocumentMutation({ variables: { _id: _id } })}>
-                  Resize it
-                </Button>
                 <Document key={_id}>
                   <Link to={`/documents/${_id}/edit`} />
                   <header>
@@ -92,7 +80,27 @@ const DocumentsUseQueryUseMutation = () => {
               </div>
             ))}
           </DocumentsList>
-          <ul>{listImages}</ul>
+          {imageState === 'Images Uploaded' ? (
+            <div>
+              <Button onClick={() => addImagesMutation({ variables: { listImages: images } })}>
+                Add Images To Collection
+              </Button>
+              {images.map((currImage, currIndex) => (
+                <div key={currIndex}>
+                  <img alt="" src={currImage} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <label>
+                Add images:
+                <input type="file" ref={inputRef} multiple />
+              </label>
+              <br />
+              <button type="submit">Upload</button>
+            </form>
+          )}
         </div>
       ) : (
         <BlankState

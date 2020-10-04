@@ -16,8 +16,7 @@
     }
   },
   "scripts": {
-    "express": "meteor npm run server --prefix Express",
-    "dev": "concurrently \"meteor --settings settings-development.json --port 3210\" \"meteor npm run express\"",
+    "dev": "meteor --settings settings-development.json --port 3210",
     "staging": "DEPLOY_HOSTNAME=us-east-1.galaxy-deploy.meteor.com meteor deploy pup-staging.cleverbeagle.com --settings settings-staging.json",
     "production": "DEPLOY_HOSTNAME=us-east-1.galaxy-deploy.meteor.com meteor deploy pup.cleverbeagle.com --settings settings-production.json",
     "lint": "eslint .",
@@ -42,10 +41,9 @@
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "commonmark": "^0.29.0",
-    "concurrently": "^5.3.0",
     "core-js": "^3.1.4",
     "file-saver": "^2.0.2",
-    "fs": "0.0.1-security",
+    "filereader": "^0.10.3",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.5",
@@ -73,6 +71,7 @@
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.2.0",
     "sanitize-html": "^1.20.1",
+    "sharp": "^0.26.1",
     "styled-components": "^4.3.2",
     "url-pattern": "^1.0.3",
     "xml": "^1.0.1"

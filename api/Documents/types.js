@@ -6,6 +6,9 @@ export default `
     createdAt: String
     updatedAt: String
     body: String
+    originalDataUrl: String
+    resizedDataUrl: String
+    listImages: [String]
     owner: String
     comments(sortBy: String): [Comment]
   }

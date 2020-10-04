@@ -22,8 +22,20 @@ mutation updateDocument($_id: String!, $title: String, $body: String, $isPublic:
   }
 }
 
-mutation resizeDocument($_id: String!) {
-  resizeDocument(_id: $_id) {
+mutation addImages($listImages: [String]) {
+  addDocument(listImages: $listImages) {
+    _id
+    isPublic
+    title
+    body
+    createdAt
+    updatedAt
+    owner
+  }
+}
+
+mutation resizeDocument($_id: String, $body: String) {
+  resizeDocument(_id: $_id, body: $body) {
     _id
     isPublic
     title

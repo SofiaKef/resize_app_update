@@ -13,7 +13,7 @@ const DocumentsUseQueryUseMutation = () => {
   const history = useHistory();
   const inputRef = useRef();
   /* used state to store images because pushing then from inside function into
-  an array that was defined outside, didn't make any changes */ 
+  an array that was defined outside, didn't make any changes */
   const [images, setImages] = useState([]);
   const [imageState, setImageState] = useState('No images');
   const { loading, data, error } = useQuery(documentsQuery);
@@ -46,10 +46,6 @@ const DocumentsUseQueryUseMutation = () => {
           // if all images are done loading
           if (imagesLocal.length + 1 === inputRef.current.files.length) {
             setImageState('Images Uploaded');
-            // showcase that images is an array of strings ([String])
-            console.log(`isArray images: ${Array.isArray(imagesLocal)}`);
-            console.log(`typeof image[0]: ${typeof imagesLocal[0]}`);
-            console.log(`images: ${imagesLocal}`);
           }
           return [...imagesLocal, readerEvent.target.result];
         });
@@ -57,6 +53,13 @@ const DocumentsUseQueryUseMutation = () => {
       reader.readAsDataURL(inputRef.current.files[i]);
     }
   };
+
+  if (imageState === 'Images Uploaded') {
+    // showcase that images is an array of strings ([String])
+    console.log(`isArray images: ${Array.isArray(images)}`);
+    console.log(`typeof image[0]: ${typeof images[0]}`);
+    console.log(`images: ${images}`);
+  }
 
   return (
     <StyledDocuments>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { useMutation, useQuery } from '@apollo/client';
@@ -10,8 +10,11 @@ import Loading from '../../components/Loading';
 import { Document, DocumentsList, StyledDocuments } from './styles';
 
 const DocumentsUseQueryUseMutation = () => {
+  console.log('DocumentsUseQueryUseMutation');
   const history = useHistory();
-  const { loading, data, error } = useQuery(documentsQuery);
+  const { loading, data, error, refetch } = useQuery(documentsQuery, {
+    fetchPolicy: 'network-only',
+  });
   const [addDocumentMutation] = useMutation(addDocument, {
     refetchQueries: [{ query: documentsQuery }],
     onCompleted: (mutation) => {
@@ -38,7 +41,7 @@ const DocumentsUseQueryUseMutation = () => {
       </header>
       {documents?.length ? (
         <DocumentsList>
-          {documents.map(({ _id, isPublic, title, updatedAt }) => (
+          {documents.map(({ _id, isPublic, title, originalBase64, updatedAt }) => (
             <Document key={_id}>
               <Link to={`/documents/${_id}/edit`} />
               <header>
@@ -49,6 +52,9 @@ const DocumentsUseQueryUseMutation = () => {
                 )}
                 <h2>{title}</h2>
                 <p>{timeago(updatedAt)}</p>
+                {originalBase64 && (
+                  <img alt={title} src={originalBase64} style={{ width: '100%' }} />
+                )}
               </header>
             </Document>
           ))}

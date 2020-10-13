@@ -38,9 +38,10 @@ export default {
     return doc;
   },
   addImages: (root, args, context) => {
+    console.log('addImages', JSON.stringify({ args }, null, 2));
     if (!context.user) throw new Error('Sorry, you must be logged in to add a new document.');
     const date = new Date().toISOString();
-    let doc;
+    let docs = [];
     for (let i = 0; i < args.listImages.length; i += 1) {
       const documentId = Documents.insert({
         isPublic: args.isPublic || false,
@@ -55,9 +56,10 @@ export default {
         updatedAt: date,
         originalBase64: args.listImages[i],
       });
-      doc = Documents.findOne(documentId);
+      const doc = Documents.findOne(documentId);
+      docs.push(doc);
     }
-    return doc;
+    return docs;
   },
   // resizeDocument is a placeholder for now
   resizeDocument: (root, args, context) => {

@@ -3,6 +3,7 @@ fragment DocumentAttributes on Document {
   isPublic
   title
   body
+  originalBase64
   updatedAt
   createdAt
 }

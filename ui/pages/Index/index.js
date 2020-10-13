@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { useMutation, useQuery } from '@apollo/client';
@@ -13,19 +13,31 @@ const DocumentsUseQueryUseMutation = () => {
   const history = useHistory();
   const inputRef = useRef();
   /* used state to store images because pushing then from inside function into
-  an array that was defined outside, didn't make any changes */
+   an array that was defined outside, didn't make any changes */
   const [images, setImages] = useState([]);
   const [imageState, setImageState] = useState('No images');
-  const { loading, data, error } = useQuery(documentsQuery);
+  const { loading, data, error } = useQuery(documentsQuery, { fetchPolicy: 'network-only' });
   const [addDocumentMutation] = useMutation(addDocument, {
     refetchQueries: [{ query: documentsQuery }],
     onCompleted: (mutation) => {
       history.push(`/documents/${mutation.addDocument._id}/edit`);
     },
   });
-  const [addImagesMutation] = useMutation(addImages, {
-    refetchQueries: [{ query: documentsQuery }],
-  });
+  const [addImagesMutation] = useMutation(addImages, {});
+
+  const uploadImages = () => {
+    addImagesMutation({
+      variables: { listImages: images },
+      refetchQueries: [{ query: documentsQuery }],
+    }).then(
+      (mutation) => {
+        console.log('ok', JSON.stringify({ mutation }, null, 2));
+      },
+      (error) => {
+        console.log('error', JSON.stringify({ error }, null, 2));
+      },
+    );
+  };
 
   if (loading) {
     return <Loading />;
@@ -66,7 +78,7 @@ const DocumentsUseQueryUseMutation = () => {
       {documents && documents.length ? (
         <div>
           <DocumentsList>
-            {documents.map(({ _id, isPublic, title, updatedAt }) => (
+            {documents.map(({ _id, isPublic, title, originalBase64, updatedAt }) => (
               <div key={_id}>
                 <Document key={_id}>
                   <Link to={`/documents/${_id}/edit`} />
@@ -78,6 +90,9 @@ const DocumentsUseQueryUseMutation = () => {
                     )}
                     <h2>{title}</h2>
                     <p>{timeago(updatedAt)}</p>
+                    {originalBase64 && (
+                      <img alt={title} src={originalBase64} style={{ width: '100%' }} />
+                    )}
                   </header>
                 </Document>
               </div>
@@ -85,9 +100,7 @@ const DocumentsUseQueryUseMutation = () => {
           </DocumentsList>
           {imageState === 'Images Uploaded' ? (
             <div>
-              <Button onClick={() => addImagesMutation({ variables: { listImages: images } })}>
-                Add Images To Collection
-              </Button>
+              <Button onClick={uploadImages}>Add Images To Collection</Button>
               {images.map((currImage, currIndex) => (
                 <div key={currIndex}>
                   <img alt="" src={currImage} />

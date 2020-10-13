@@ -10,6 +10,7 @@ export default `
     resizedDataUrl: String
     listImages: [String]
     owner: String
+    originalBase64: String
     comments(sortBy: String): [Comment]
   }
 `;

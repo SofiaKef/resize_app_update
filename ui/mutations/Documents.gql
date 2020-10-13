@@ -23,7 +23,7 @@ mutation updateDocument($_id: String!, $title: String, $body: String, $isPublic:
 }
 
 mutation addImages($listImages: [String]) {
-  addDocument(listImages: $listImages) {
+  addImages(listImages: $listImages) {
     _id
     isPublic
     title
@@ -31,6 +31,7 @@ mutation addImages($listImages: [String]) {
     createdAt
     updatedAt
     owner
+    originalBase64
   }
 }
 

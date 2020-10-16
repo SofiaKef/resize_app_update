@@ -7,6 +7,8 @@ query documents {
     title
     updatedAt
     createdAt
+    originalDataUrl
+    resizedDataUrl
   }
 }
 

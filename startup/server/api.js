@@ -42,8 +42,8 @@ const schema = {
     type Mutation {
       addDocument(title: String, body: String): Document
       updateDocument(_id: String!, title: String, body: String, isPublic: Boolean): Document
-      addImages(listImages: [String]): [Document]
-      resizeDocument(_id: String, body: String): Document
+      addImages(originalDataUrl: String): Document
+      resizeImage(_id: String!, originalDataUrl: String!): Document
       removeDocument(_id: String!): Document
       addComment(documentId: String!, comment: String!): Comment
       removeComment(commentId: String!): Comment

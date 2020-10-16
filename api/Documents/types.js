@@ -8,9 +8,7 @@ export default `
     body: String
     originalDataUrl: String
     resizedDataUrl: String
-    listImages: [String]
     owner: String
-    originalBase64: String
     comments(sortBy: String): [Comment]
   }
 `;

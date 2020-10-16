@@ -41,7 +41,7 @@ const DocumentsUseQueryUseMutation = () => {
       </header>
       {documents?.length ? (
         <DocumentsList>
-          {documents.map(({ _id, isPublic, title, originalBase64, updatedAt }) => (
+          {documents.map(({ _id, isPublic, title, originalDataUrl, updatedAt }) => (
             <Document key={_id}>
               <Link to={`/documents/${_id}/edit`} />
               <header>
@@ -52,8 +52,8 @@ const DocumentsUseQueryUseMutation = () => {
                 )}
                 <h2>{title}</h2>
                 <p>{timeago(updatedAt)}</p>
-                {originalBase64 && (
-                  <img alt={title} src={originalBase64} style={{ width: '100%' }} />
+                {originalDataUrl && (
+                  <img alt={title} src={originalDataUrl} style={{ width: '100%' }} />
                 )}
               </header>
             </Document>

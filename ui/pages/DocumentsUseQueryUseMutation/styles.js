@@ -5,6 +5,14 @@ export const StyledDocuments = styled.div`
     margin: 0px 0 20px;
   }
 
+  button {
+    margin: 20px 0;
+  }
+
+  form {
+    margin: 20px 0;
+  }
+
   @media screen and (min-width: 768px) {
     header {
       margin: 0 0 20px;

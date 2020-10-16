@@ -22,8 +22,8 @@ mutation updateDocument($_id: String!, $title: String, $body: String, $isPublic:
   }
 }
 
-mutation addImages($listImages: [String]) {
-  addImages(listImages: $listImages) {
+mutation addImages($originalDataUrl: String) {
+  addImages(originalDataUrl: $originalDataUrl) {
     _id
     isPublic
     title
@@ -31,12 +31,12 @@ mutation addImages($listImages: [String]) {
     createdAt
     updatedAt
     owner
-    originalBase64
+    originalDataUrl
   }
 }
 
-mutation resizeDocument($_id: String, $body: String) {
-  resizeDocument(_id: $_id, body: $body) {
+mutation resizeImage($_id: String!, $originalDataUrl: String!) {
+  resizeImage(_id: $_id, originalDataUrl: $originalDataUrl) {
     _id
     isPublic
     title
@@ -44,6 +44,8 @@ mutation resizeDocument($_id: String, $body: String) {
     createdAt
     updatedAt
     owner
+    originalDataUrl
+    resizedDataUrl
   }
 }
 

@@ -89,8 +89,8 @@ const DocumentsUseQueryUseMutation = () => {
   }
 
   const resizeImages = () => {
-    documents.forEach(({ _id, originalDataUrl }) => {
-      if (originalDataUrl != null) {
+    documents.forEach(({ _id, originalDataUrl, resizedDataUrl }) => {
+      if (originalDataUrl != null && resizedDataUrl == null) {
         resizeImageMutation({
           variables: { _id: _id, originalDataUrl: originalDataUrl },
           refetchQueries: [{ query: documentsQuery }],

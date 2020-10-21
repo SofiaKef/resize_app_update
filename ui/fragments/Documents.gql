@@ -7,4 +7,5 @@ fragment DocumentAttributes on Document {
   resizedDataUrl
   updatedAt
   createdAt
+  resizeProcessTime
 }

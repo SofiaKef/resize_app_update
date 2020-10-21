@@ -8,6 +8,7 @@ export default `
     body: String
     originalDataUrl: String
     resizedDataUrl: String
+    resizeProcessTime: String
     owner: String
     comments(sortBy: String): [Comment]
   }

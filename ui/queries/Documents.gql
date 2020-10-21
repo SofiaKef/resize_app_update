@@ -9,6 +9,7 @@ query documents {
     createdAt
     originalDataUrl
     resizedDataUrl
+    resizeProcessTime
   }
 }
 

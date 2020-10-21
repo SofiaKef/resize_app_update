@@ -117,7 +117,15 @@ const DocumentsUseQueryUseMutation = () => {
           <Button onClick={resizeImages}>Resize all images</Button>
           <DocumentsList>
             {documents.map(
-              ({ _id, isPublic, title, originalDataUrl, resizedDataUrl, updatedAt }) => (
+              ({
+                _id,
+                isPublic,
+                title,
+                originalDataUrl,
+                resizedDataUrl,
+                updatedAt,
+                resizeProcessTime,
+              }) => (
                 <Document key={_id}>
                   <Link to={`/documents/${_id}/edit`} />
                   <header>
@@ -127,7 +135,9 @@ const DocumentsUseQueryUseMutation = () => {
                       <span className="label label-default">Private</span>
                     )}
                     <h2>{title}</h2>
-                    <p>{timeago(updatedAt)}</p>
+                    <p>
+                      {timeago(updatedAt)}, {`${resizeProcessTime}s`}
+                    </p>
                     {originalDataUrl && (
                       <img
                         alt={title}

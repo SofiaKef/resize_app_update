@@ -58,6 +58,7 @@ export default {
     if (!context.user) throw new Error('Sorry, you must be logged in to update a document.');
     if (!Documents.findOne({ _id: args._id, owner: context.user._id }))
       throw new Error('Sorry, you need to be the owner of this document to update it.');
+    const start = new Date();
     const parts = args.originalDataUrl.split(';');
     const mimType = parts[0].split(':')[1];
     const imageData = parts[1].split(',')[1];
@@ -68,6 +69,7 @@ export default {
       .then((resizedImageBuffer) => {
         const resizedImageData = resizedImageBuffer.toString('base64');
         const resizedBase64 = `data:${mimType};base64,${resizedImageData}`;
+        const processTime = new Date() - start;
         Documents.update(
           { _id: args._id },
           {
@@ -75,6 +77,7 @@ export default {
               ...args,
               resizedDataUrl: resizedBase64,
               updatedAt: new Date().toISOString(),
+              resizeProcessTime: processTime,
             },
           },
         );

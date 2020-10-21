@@ -38,14 +38,10 @@ mutation addImages($originalDataUrl: String) {
 mutation resizeImage($_id: String!, $originalDataUrl: String!) {
   resizeImage(_id: $_id, originalDataUrl: $originalDataUrl) {
     _id
-    isPublic
-    title
-    body
-    createdAt
     updatedAt
-    owner
     originalDataUrl
     resizedDataUrl
+    resizeProcessTime
   }
 }
 

@@ -81,7 +81,7 @@ class App extends React.Component {
             <Authenticated
               exact
               path="/documents"
-              component={DocumentsUseQueryUseMutation}
+              component={Index}
               setAfterLoginPath={setAfterLoginPath}
               {...props}
               {...state}
